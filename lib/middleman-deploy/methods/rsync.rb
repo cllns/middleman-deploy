@@ -21,12 +21,21 @@ module Middleman
 
           dest_url  = "#{user}#{host}:#{path}"
           flags     = self.flags || '-avz'
-          command   = "rsync #{flags} '-e ssh -p #{port}' #{build_dir}/ #{dest_url}"
+
+          command   = "rsync #{flags} #{remote_shell_command} #{build_dir}/ #{dest_url}"
 
           command += ' --delete' if clean
 
           puts "## Deploying via rsync to #{dest_url} port=#{port}"
           exec command
+        end
+
+        private
+
+        def remote_shell_command
+          if !host.empty? && !user.empty?
+            "'-e ssh -p #{port}'"
+          end
         end
       end
     end
